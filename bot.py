@@ -83,6 +83,7 @@ def process_info(m):
     fi = None
     hp = False
     photo_status = "🔒 Hidden"
+    ci = None
     
     try:
         ci = b.get_chat(ti)
@@ -90,27 +91,32 @@ def process_info(m):
         elif getattr(ci, "title", None): nm = ci.title
         if getattr(ci, "username", None): un = f"@{ci.username}"
         
-        # Nadiifinta HTML-ka si uusan sawirku u diidin
+        # Nadiifinta HTML
         if getattr(ci, "bio", None): 
             sb = str(ci.bio).replace('<', '&lt;').replace('>', '&gt;')
             bi = f"<code>{sb}</code>"
         elif getattr(ci, "description", None): 
             sd = str(ci.description[:50]).replace('<', '&lt;').replace('>', '&gt;')
             bi = f"<code>{sd}...</code>"
-        
-        if getattr(ci, "photo", None):
-            fi = ci.photo.big_file_id
-            hp = True
-            photo_status = "🖼️ 1 Photo"
     except: pass
     
-    if is_u and not hp:
+    # XALKA 1: Haddii uu yahay qof (User), isticmaal Profile Photos ID
+    if is_u:
         try:
             p = b.get_user_profile_photos(ti, limit=1)
             if p and p.total_count > 0:
                 fi = p.photos[0][-1].file_id
                 hp = True
                 photo_status = f"🖼️ {p.total_count} Photo(s)"
+        except: pass
+
+    # XALKA 2: Haddii uu yahay Channel/Group/Bot, Download garee sawirka sababtoo ah 'ChatPhoto' lama diri karo
+    if not hp and ci and getattr(ci, "photo", None):
+        try:
+            file_info = b.get_file(ci.photo.big_file_id)
+            fi = b.download_file(file_info.file_path) # Wuxuu soo dejinayaa sawirka si uu xal ugu noqdo Error 400
+            hp = True
+            photo_status = "🖼️ 1 Photo"
         except: pass
 
     cc = lc.upper() if lc != "🔒 Hidden" else "🔒 Hidden"
@@ -138,7 +144,6 @@ def process_info(m):
         else: 
             b.reply_to(m, caption, reply_markup=mk(ti), parse_mode="HTML")
     except Exception as e:
-        # Hadii ay cilad timaado sawirka, halkan ayay kuusoo bandhigaysaa!
         b.reply_to(m, caption + f"\n\n⚠️ Cilad ayaa diiday sawirka: {e}", reply_markup=mk(ti), parse_mode="HTML")
 
 def br(m):
