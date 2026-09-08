@@ -89,8 +89,14 @@ def process_info(m):
         if getattr(ci, "first_name", None): nm = ci.first_name
         elif getattr(ci, "title", None): nm = ci.title
         if getattr(ci, "username", None): un = f"@{ci.username}"
-        if getattr(ci, "bio", None): bi = f"<code>{ci.bio}</code>"
-        elif getattr(ci, "description", None): bi = f"<code>{ci.description[:50]}...</code>"
+        
+        # Nadiifinta HTML-ka si uusan sawirku u diidin
+        if getattr(ci, "bio", None): 
+            sb = str(ci.bio).replace('<', '&lt;').replace('>', '&gt;')
+            bi = f"<code>{sb}</code>"
+        elif getattr(ci, "description", None): 
+            sd = str(ci.description[:50]).replace('<', '&lt;').replace('>', '&gt;')
+            bi = f"<code>{sd}...</code>"
         
         if getattr(ci, "photo", None):
             fi = ci.photo.big_file_id
@@ -108,6 +114,7 @@ def process_info(m):
         except: pass
 
     cc = lc.upper() if lc != "🔒 Hidden" else "🔒 Hidden"
+    nm = str(nm).replace('<', '&lt;').replace('>', '&gt;')
     
     caption = f"""🔎 TELEGRAM ID CHECK
 
@@ -130,8 +137,9 @@ def process_info(m):
             b.send_photo(m.chat.id, fi, caption=caption, reply_markup=mk(ti), parse_mode="HTML")
         else: 
             b.reply_to(m, caption, reply_markup=mk(ti), parse_mode="HTML")
-    except:
-        b.reply_to(m, caption, reply_markup=mk(ti), parse_mode="HTML")
+    except Exception as e:
+        # Hadii ay cilad timaado sawirka, halkan ayay kuusoo bandhigaysaa!
+        b.reply_to(m, caption + f"\n\n⚠️ Cilad ayaa diiday sawirka: {e}", reply_markup=mk(ti), parse_mode="HTML")
 
 def br(m):
     x.execute("SELECT id FROM u")
