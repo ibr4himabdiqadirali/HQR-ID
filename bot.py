@@ -1,5 +1,5 @@
-import telebot, sqlite3
-from telebot.types import InlineKeyboardMarkup as IKM, InlineKeyboardButton as IKB, ReplyKeyboardMarkup as RKM, KeyboardButton as KB, KeyboardButtonRequestUser as RU, KeyboardButtonRequestChat as RC
+import telebot, sqlite3, json
+from telebot.types import InlineKeyboardMarkup as IKM, InlineKeyboardButton as IKB
 
 b = telebot.TeleBot("8770255847:AAFzI_4wLNTmJ5Mzbk7J12qhW55MhYgQ-Dk")
 c = sqlite3.connect("u.db", check_same_thread=False)
@@ -18,15 +18,31 @@ def mk(i):
     m.add(IKB("🔎 Check Another", url="https://t.me/HQR_ID?start=start"))
     return m
 
+# Nidaamka Custom JSON ee Xallinaya Cillad kasta oo Badhamada ah
 def km(i):
-    k = RKM(resize_keyboard=True)
+    kbd = []
     if i == 6903972630: # Admin
-        k.row("👥 Xogta", "📢 Post", "🔗 Ku xidh")
+        kbd.append([{"text": "👥 Xogta"}, {"text": "📢 Post"}, {"text": "🔗 Ku xidh"}])
     
-    k.row(KB("👤 User", request_user=RU(1, user_is_bot=False)), KB("⭐ Premium", request_user=RU(2, user_is_premium=True)), KB("🤖 Bot", request_user=RU(3, user_is_bot=True)))
-    k.row(KB("👥 Group", request_chat=RC(4, chat_is_channel=False)), KB("📢 Channel", request_chat=RC(5, chat_is_channel=True)), KB("💬 Forum", request_chat=RC(6, chat_is_channel=False, chat_is_forum=True)))
-    k.row(KB("👥 My Group", request_chat=RC(7, chat_is_channel=False, chat_is_created=True)), KB("📢 My Channel", request_chat=RC(8, chat_is_channel=True, chat_is_created=True)), KB("💬 My Forum", request_chat=RC(9, chat_is_channel=False, chat_is_forum=True, chat_is_created=True)))
-    return k
+    kbd.append([
+        {"text": "👤 User", "request_users": {"request_id": 1, "user_is_bot": False, "request_photo": True, "request_name": True, "request_username": True, "max_quantity": 1}},
+        {"text": "⭐ Premium", "request_users": {"request_id": 2, "user_is_premium": True, "request_photo": True, "request_name": True, "request_username": True, "max_quantity": 1}},
+        {"text": "🤖 Bot", "request_users": {"request_id": 3, "user_is_bot": True, "request_photo": True, "request_name": True, "request_username": True, "max_quantity": 1}}
+    ])
+    
+    kbd.append([
+        {"text": "👥 Group", "request_chat": {"request_id": 4, "chat_is_channel": False, "request_title": True, "request_username": True, "request_photo": True}},
+        {"text": "📢 Channel", "request_chat": {"request_id": 5, "chat_is_channel": True, "request_title": True, "request_username": True, "request_photo": True}},
+        {"text": "💬 Forum", "request_chat": {"request_id": 6, "chat_is_channel": False, "chat_is_forum": True, "request_title": True, "request_username": True, "request_photo": True}}
+    ])
+    
+    kbd.append([
+        {"text": "👥 My Group", "request_chat": {"request_id": 7, "chat_is_channel": False, "chat_is_created": True, "request_title": True, "request_username": True, "request_photo": True}},
+        {"text": "📢 My Channel", "request_chat": {"request_id": 8, "chat_is_channel": True, "chat_is_created": True, "request_title": True, "request_username": True, "request_photo": True}},
+        {"text": "💬 My Forum", "request_chat": {"request_id": 9, "chat_is_channel": False, "chat_is_forum": True, "chat_is_created": True, "request_title": True, "request_username": True, "request_photo": True}}
+    ])
+    
+    return json.dumps({"keyboard": kbd, "resize_keyboard": True})
 
 @b.message_handler(commands=["start"])
 def st(m):
@@ -57,16 +73,33 @@ def h(m):
 
 def process_info(m):
     is_u = True; ti = None; un = "Qariyan"; nm = "Unknown"; lc = "🔒 Hidden"
+    bi = "🔒 Hidden"; photo_file = None; hp = False; photo_status = "🔒 Hidden"
     
-    us = getattr(m, "user_shared", None) or getattr(m, "users_shared", None)
-    cs = getattr(m, "chat_shared", None)
+    # Nidaamkan wuxuu si toos ah fariinta JSON uga dhuuqayaa sawirada lasoo wadaagay
+    msg_json = getattr(m, "json", {})
+    us_data = msg_json.get("users_shared") or msg_json.get("user_shared")
+    cs_data = msg_json.get("chat_shared")
     
-    if us: 
-        ti = getattr(us, "user_id", None)
-        if not ti and hasattr(us, "users") and us.users: ti = us.users[0].user_id
-        nm = "Shared User"
-    elif cs: 
-        ti = cs.chat_id; nm = "Shared Chat"; is_u = False
+    if us_data:
+        is_u = True
+        if "users" in us_data:
+            user_info = us_data["users"][0]
+            ti = user_info.get("user_id")
+            nm = user_info.get("first_name", "Shared User")
+            if "username" in user_info: un = f"@{user_info['username']}"
+            if "photo" in user_info and user_info["photo"]:
+                photo_file = user_info["photo"][-1]["file_id"]
+                hp = True; photo_status = "🖼️ 1 Photo"
+        else:
+            ti = us_data.get("user_id")
+    elif cs_data:
+        is_u = False
+        ti = cs_data.get("chat_id")
+        nm = cs_data.get("title", "Shared Chat")
+        if "username" in cs_data: un = f"@{cs_data['username']}"
+        if "photo" in cs_data and cs_data["photo"]:
+            photo_file = cs_data["photo"][-1]["file_id"]
+            hp = True; photo_status = "🖼️ 1 Photo"
     elif m.forward_from_chat: 
         c_chat = m.forward_from_chat; ti = c_chat.id
         un = f"@{c_chat.username}" if c_chat.username else "Qariyan"; nm = c_chat.title; is_u = False
@@ -81,17 +114,12 @@ def process_info(m):
 
     if not ti: return
 
-    bi = "🔒 Hidden"
-    photo_file = None
-    hp = False
-    photo_status = "🔒 Hidden"
-    
     ci = None
     try:
         ci = b.get_chat(ti)
-        if getattr(ci, "first_name", None): nm = ci.first_name
-        elif getattr(ci, "title", None): nm = ci.title
-        if getattr(ci, "username", None): un = f"@{ci.username}"
+        if getattr(ci, "first_name", None) and not hp: nm = ci.first_name
+        elif getattr(ci, "title", None) and not hp: nm = ci.title
+        if getattr(ci, "username", None) and un == "Qariyan": un = f"@{ci.username}"
         if getattr(ci, "type", None) and ci.type in ["channel", "group", "supergroup"]: is_u = False
         
         if getattr(ci, "bio", None): 
@@ -102,8 +130,8 @@ def process_info(m):
             bi = f"<code>{sd}...</code>"
     except: pass
     
-    # 1. Haddii uu yahay User, ka soo qaad sawirka profile-ka
-    if is_u:
+    # Qofka sawirkiisa haddii laga waayo JSON
+    if is_u and not hp:
         try:
             p = b.get_user_profile_photos(ti, limit=1)
             if p and p.total_count > 0:
@@ -112,7 +140,7 @@ def process_info(m):
                 photo_status = f"🖼️ {p.total_count} Photo(s)"
         except: pass
 
-    # 2. Haddii sawir loo heli waayo ama uu yahay Channel/Group, soo dejiso (download) sawirkiisa
+    # Channel/Group sawirkiisa soo dejin (Download) haddii JSON laga waayo
     if not hp and ci and getattr(ci, "photo", None):
         try:
             file_info = b.get_file(ci.photo.big_file_id)
