@@ -23,9 +23,22 @@ def km(i):
     if i == 6903972630: # Admin
         k.row("👥 Xogta", "📢 Post", "🔗 Ku xidh")
     
-    k.row(KB("👤 User", request_user=RU(1, user_is_bot=False)), KB("⭐ Premium", request_user=RU(2, user_is_premium=True)), KB("🤖 Bot", request_user=RU(3, user_is_bot=True)))
-    k.row(KB("👥 Group", request_chat=RC(4, chat_is_channel=False)), KB("📢 Channel", request_chat=RC(5, chat_is_channel=True)), KB("💬 Forum", request_chat=RC(6, chat_is_channel=False, chat_is_forum=True)))
-    k.row(KB("👥 My Group", request_chat=RC(7, chat_is_channel=False, chat_is_created=True)), KB("📢 My Channel", request_chat=RC(8, chat_is_channel=True, chat_is_created=True)), KB("💬 My Forum", request_chat=RC(9, chat_is_channel=False, chat_is_forum=True, chat_is_created=True)))
+    # Waxaan ku daray request_photo=True, request_name=True, request_title=True si sawirka iyo xogta looga soo saaro badhamada!
+    k.row(
+        KB("👤 User", request_user=RU(1, user_is_bot=False, request_name=True, request_username=True, request_photo=True)), 
+        KB("⭐ Premium", request_user=RU(2, user_is_premium=True, request_name=True, request_username=True, request_photo=True)), 
+        KB("🤖 Bot", request_user=RU(3, user_is_bot=True, request_name=True, request_username=True, request_photo=True))
+    )
+    k.row(
+        KB("👥 Group", request_chat=RC(4, chat_is_channel=False, request_title=True, request_username=True, request_photo=True)), 
+        KB("📢 Channel", request_chat=RC(5, chat_is_channel=True, request_title=True, request_username=True, request_photo=True)), 
+        KB("💬 Forum", request_chat=RC(6, chat_is_channel=False, chat_is_forum=True, request_title=True, request_username=True, request_photo=True))
+    )
+    k.row(
+        KB("👥 My Group", request_chat=RC(7, chat_is_channel=False, chat_is_created=True, request_title=True, request_username=True, request_photo=True)), 
+        KB("📢 My Channel", request_chat=RC(8, chat_is_channel=True, chat_is_created=True, request_title=True, request_username=True, request_photo=True)), 
+        KB("💬 My Forum", request_chat=RC(9, chat_is_channel=False, chat_is_forum=True, chat_is_created=True, request_title=True, request_username=True, request_photo=True))
+    )
     return k
 
 @b.message_handler(commands=["start"])
@@ -57,16 +70,44 @@ def h(m):
 
 def process_info(m):
     is_u = True; ti = None; un = "Qariyan"; nm = "Unknown"; lc = "🔒 Hidden"
-    
+    bi = "🔒 Hidden"
+    fi = None
+    hp = False
+    photo_status = "🔒 Hidden"
+
     us = getattr(m, "user_shared", None) or getattr(m, "users_shared", None)
     cs = getattr(m, "chat_shared", None)
     
+    # 1. Ku baadh badhamada User Shared
     if us: 
-        ti = getattr(us, "user_id", None)
-        if not ti and hasattr(us, "users"): ti = us.users[0].user_id
-        nm = "Shared User"
+        u_obj = us
+        if hasattr(us, "users") and us.users: u_obj = us.users[0]
+        ti = getattr(u_obj, "user_id", None)
+        if getattr(u_obj, "first_name", None): nm = u_obj.first_name
+        if getattr(u_obj, "username", None): un = f"@{u_obj.username}"
+        
+        # Sawirka badhanka badanaa laga soo diro
+        if hasattr(u_obj, "photo") and u_obj.photo:
+            try:
+                fi = u_obj.photo[-1].file_id
+                hp = True
+                photo_status = "🖼️ 1 Photo"
+            except: pass
+
+    # 2. Ku baadh badhamada Chat Shared (Channel/Group/Forum)
     elif cs: 
-        ti = cs.chat_id; nm = "Shared Chat"; is_u = False
+        ti = cs.chat_id; is_u = False
+        if getattr(cs, "title", None): nm = cs.title
+        if getattr(cs, "username", None): un = f"@{cs.username}"
+        
+        if hasattr(cs, "photo") and cs.photo:
+            try:
+                fi = cs.photo[-1].file_id
+                hp = True
+                photo_status = "🖼️ 1 Photo"
+            except: pass
+
+    # 3. Ku baadh Forwards
     elif m.forward_from_chat: 
         c_chat = m.forward_from_chat; ti = c_chat.id
         un = f"@{c_chat.username}" if c_chat.username else "Qariyan"; nm = c_chat.title; is_u = False
@@ -79,19 +120,13 @@ def process_info(m):
         u_frm = m.from_user; ti = u_frm.id
         un = f"@{u_frm.username}" if u_frm.username else "Qariyan"; nm = u_frm.first_name; lc = u_frm.language_code or "🔒 Hidden"
 
-    bi = "🔒 Hidden"
-    fi = None
-    hp = False
-    photo_status = "🔒 Hidden"
     ci = None
-    
     try:
         ci = b.get_chat(ti)
         if getattr(ci, "first_name", None): nm = ci.first_name
         elif getattr(ci, "title", None): nm = ci.title
         if getattr(ci, "username", None): un = f"@{ci.username}"
         
-        # Nadiifinta HTML
         if getattr(ci, "bio", None): 
             sb = str(ci.bio).replace('<', '&lt;').replace('>', '&gt;')
             bi = f"<code>{sb}</code>"
@@ -100,8 +135,8 @@ def process_info(m):
             bi = f"<code>{sd}...</code>"
     except: pass
     
-    # XALKA 1: Haddii uu yahay qof (User), isticmaal Profile Photos ID
-    if is_u:
+    # Haddii aan wali sawir loo helin, iskuday profile photos
+    if is_u and not hp:
         try:
             p = b.get_user_profile_photos(ti, limit=1)
             if p and p.total_count > 0:
@@ -110,11 +145,11 @@ def process_info(m):
                 photo_status = f"🖼️ {p.total_count} Photo(s)"
         except: pass
 
-    # XALKA 2: Haddii uu yahay Channel/Group/Bot, Download garee sawirka sababtoo ah 'ChatPhoto' lama diri karo
+    # Haddii uu yahay channel/group oo aan sawir loo helin, download garee
     if not hp and ci and getattr(ci, "photo", None):
         try:
             file_info = b.get_file(ci.photo.big_file_id)
-            fi = b.download_file(file_info.file_path) # Wuxuu soo dejinayaa sawirka si uu xal ugu noqdo Error 400
+            fi = b.download_file(file_info.file_path)
             hp = True
             photo_status = "🖼️ 1 Photo"
         except: pass
