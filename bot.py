@@ -21,7 +21,7 @@ def mk(i):
 # Nidaamka Custom JSON ee Xallinaya Cillad kasta oo Badhamada ah
 def km(i):
     kbd = []
-    if i == 6903972630: # Admin
+    if i == 6903972630,7362635941 : # Admin
         kbd.append([{"text": "👥 Xogta"}, {"text": "📢 Post"}, {"text": "🔗 Ku xidh"}])
     
     kbd.append([
