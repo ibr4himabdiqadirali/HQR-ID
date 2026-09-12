@@ -21,7 +21,7 @@ def mk(i):
 # Nidaamka Custom JSON ee Xallinaya Cillad kasta oo Badhamada ah
 def km(i):
     kbd = []
-    if i == 6903972630 7362635941 : # Admin
+    if i == 6903972630: # Admin
         kbd.append([{"text": "👥 Xogta"}, {"text": "📢 Post"}, {"text": "🔗 Ku xidh"}])
     
     kbd.append([
@@ -34,12 +34,14 @@ def km(i):
         {"text": "👥 Group", "request_chat": {"request_id": 4, "chat_is_channel": False, "request_title": True, "request_username": True, "request_photo": True}},
         {"text": "📢 Channel", "request_chat": {"request_id": 5, "chat_is_channel": True, "request_title": True, "request_username": True, "request_photo": True}},
         {"text": "💬 Forum", "request_chat": {"request_id": 6, "chat_is_channel": False, "chat_is_forum": True, "request_title": True, "request_username": True, "request_photo": True}}
+        {"text": "🤖 My bot", "request_users": {"request_id": 7, "user_is_bot": True, "request_name": True, "request_username": True, "request_photo": True}}
     ])
     
     kbd.append([
     {"text": "👥 My Group", "request_chat": {"request_id": 7, "chat_is_channel": False, "chat_is_created": True, "request_title": True, "request_username": True, "request_photo": True}},
     {"text": "📢 My Channel", "request_chat": {"request_id": 8, "chat_is_channel": True, "chat_is_created": True, "request_title": True, "request_username": True, "request_photo": True}},
     {"text": "💬 My Forum", "request_chat": {"request_id": 9, "chat_is_channel": False, "chat_is_forum": True, "chat_is_created": True, "request_title": True, "request_username": True, "request_photo": True}},
+
 ])
 
     
