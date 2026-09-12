@@ -165,7 +165,9 @@ def process_info(m):
 🖼️ Profile Picture: {photo_status}
 📝 Bio/Desc: {bi}
 🎂 Birthday: 10/8
-
+*OUR BOT*
+_> TTS BOT: @HAQA_BTIRE_TTS_bot
+_>LINUX TML: @Termux_4bot
 <blockquote>This data helps you:
 • understand the real age of the account
 • assess profile reliability
