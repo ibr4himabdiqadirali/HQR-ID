@@ -166,10 +166,6 @@ def process_info(m):
 📝 Bio/Desc: {bi}
 🎂 Birthday: 10/8
 
-**OUR BOT**
-**TTS BOT:** @HAQA_BTIRE_TTS_bot
-**LINUX TML:** @Termux_4bot
-
 <blockquote>This data helps you:
 • understand the real age of the account
 • assess profile reliability
