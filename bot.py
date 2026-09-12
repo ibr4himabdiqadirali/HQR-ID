@@ -107,7 +107,7 @@ def process_info(m):
         c_chat = m.forward_from_chat; ti = c_chat.id
         un = f"@{c_chat.username}" if c_chat.username else "Qariyan"; nm = c_chat.title; is_u = False
     elif getattr(m, "forward_sender_name", None): 
-        return b.reply_to(m, f"🔎 TELEGRAM ID CHECK\n\n👤 Name: {m.forward_sender_name}\n🆔 🔒 Hidden (Privacy)\n\n⚠️ Qofkan wuxuu qarsaday xogtiisa, marka ID iyo Sawir midna lama soo saari karo.")
+        return b.reply_to(m, f"🔎 TELEGRAM ID CHECK\n\n👤 Name: {m.forward_sender_name}\n🆔 🔒 Hidden (Privacy)\n\n⚠️ This person has hidden their information, so neither their ID nor their profile picture can be retrieved.")
     elif m.forward_from: 
         u_fwd = m.forward_from; ti = u_fwd.id
         un = f"@{u_fwd.username}" if u_fwd.username else "Qariyan"; nm = u_fwd.first_name; lc = u_fwd.language_code or "🔒 Hidden"
