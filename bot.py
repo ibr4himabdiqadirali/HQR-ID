@@ -40,7 +40,7 @@ def km(i):
     kbd.append([
     {"text": "👥 My Group", "request_chat": {"request_id": 7, "chat_is_channel": False, "chat_is_created": True, "request_title": True, "request_username": True, "request_photo": True}},
     {"text": "📢 My Channel", "request_chat": {"request_id": 8, "chat_is_channel": True, "chat_is_created": True, "request_title": True, "request_username": True, "request_photo": True}},
-    {"text": "💬 My Forum", "request_chat": {"request_id": 9, "chat_is_channel": False, "chat_is_forum": True, "chat_is_created": True, "request_title": True, "request_username": True, "request_photo": True}},
+    {"text": "💬 My Forum", "request_chat": {"request_id": 9, "chat_is_channel": False, "chat_is_forum": True, "chat_is_created": True, "request_title": True, "request_username": True "request_photo": True}},
 
 ])
 
