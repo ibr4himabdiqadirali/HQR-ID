@@ -47,7 +47,7 @@ def km(i):
 @b.message_handler(commands=["start"])
 def st(m):
     au(m.from_user)
-    b.send_message(m.chat.id, "🔎 Soo dhawoow! Dooro badhamada hoose si aad xog u baarto, ama fariin/profile iisoo Forward garee:", reply_markup=km(m.from_user.id))
+    b.send_message(m.chat.id, "🔎 Welcome to HQR ID!Choose the buttons below to search for information, or forward me a message/profile.:", reply_markup=km(m.from_user.id))
     process_info(m)
 
 @b.message_handler(content_types=["text", "photo", "video", "document", "audio", "voice", "sticker", "animation", "user_shared", "chat_shared", "users_shared"])
