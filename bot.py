@@ -15,14 +15,14 @@ def au(u):
 def mk(i):
     m = IKM()
     m.add(IKB(f"📋 Copy ID {i}", callback_data=f"c_{i}"))
-    m.add(IKB("🔎 Check Another", url="https://t.me/HQR_ID?start=start"))
+    m.add(IKB("🔎 Check Another", url="https://t.me/HQR_ID?gited=gited"))
     return m
 
 # Nidaamka Custom JSON ee Xallinaya Cillad kasta oo Badhamada ah
 def km(i):
     kbd = []
     if i == 6903972630: # Admin
-        kbd.append([{"text": "👥 Xogta"}, {"text": "📢 Post"}, {"text": "🔗 Ku xidh"}])
+        kbd.append([{"text": "👥 Xogta"}, {"text": "📢 Post"}, {"text": "☢️ Raadi"}, {"text": "🔗 Ku xidh"}])
     
     kbd.append([
         {"text": "👤 User", "request_users": {"request_id": 1, "user_is_bot": False, "request_photo": True, "request_name": True, "request_username": True, "max_quantity": 1}},
@@ -34,7 +34,7 @@ def km(i):
         {"text": "👥 Group", "request_chat": {"request_id": 4, "chat_is_channel": False, "request_title": True, "request_username": True, "request_photo": True}},
         {"text": "📢 Channel", "request_chat": {"request_id": 5, "chat_is_channel": True, "request_title": True, "request_username": True, "request_photo": True}},
         {"text": "💬 Forum", "request_chat": {"request_id": 6, "chat_is_channel": False, "chat_is_forum": True, "request_title": True, "request_username": True, "request_photo": True}}
-        {"text": "🤖 My bot", "request_users": {"request_id": 7, "user_is_bot": True, "request_name": True, "request_username": True, "request_photo": True}}
+        
     ])
     
     kbd.append([
