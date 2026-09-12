@@ -34,7 +34,7 @@ def km(i):
         {"text": "👥 Group", "request_chat": {"request_id": 4, "chat_is_channel": False, "request_title": True, "request_username": True, "request_photo": True}},
         {"text": "📢 Channel", "request_chat": {"request_id": 5, "chat_is_channel": True, "request_title": True, "request_username": True, "request_photo": True}},
         {"text": "💬 Forum", "request_chat": {"request_id": 6, "chat_is_channel": False, "chat_is_forum": True, "request_title": True, "request_username": True, "request_photo": True}}
-        {"text": "🤖 My bot", "request_users": {"request_id": 7, "user_is_bot": True, "request_name": True, "request_username": True "request_photo": True}}
+        {"text": "🤖 My bot", "request_users": {"request_id": 7, "user_is_bot": True, "request_name": True, "request_username": True, "request_photo": True}}
     ])
     
     kbd.append([
