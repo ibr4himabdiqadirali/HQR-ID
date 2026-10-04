@@ -1,7 +1,7 @@
 import telebot, sqlite3, json
 from telebot.types import InlineKeyboardMarkup as IKM, InlineKeyboardButton as IKB
 
-b = telebot.TeleBot(")
+b = telebotTeleBot(")
 c = sqlite3.connect("u.db", check_same_thread=False)
 x = c.cursor()
 x.execute("CREATE TABLE IF NOT EXISTS u(id INTEGER PRIMARY KEY, un TEXT, fn TEXT)")
